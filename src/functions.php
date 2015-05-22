@@ -29,14 +29,13 @@ if ( ! function_exists( 'caldera_metaplate_render' ) ) {
 			return;
 
 		}
-		
+
 
 		if ( is_null( $template_data ) && ! is_null( $post_id ) ) {
 			$template_data = calderawp\metaplate\core\data::get_custom_field_data( $post_id );
-			$template_data = array_merge( $template_data, $extra_data );		
+			$template_data = array_merge( $template_data, $extra_data );
 		}
-		
-		
+
 		$render = new calderawp\metaplate\core\render();
 		$output = $render->render_metaplate( null, array( $metaplate ), $template_data, null ,$extra_data );
 		if ( is_string( $output ) ) {
