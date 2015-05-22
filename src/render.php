@@ -28,16 +28,12 @@ class render {
 	 *
 	 * @return    string    Rendered HTML with templates applied--if templates and data were provided.
 	 */
-	public function render_metaplate( $content, $meta_stack = null, $template_data = null, $placement = null ) {
+	public function render_metaplate( $content, $meta_stack = null, $template_data = null, $placement = null, $extra_data = array() ) {
 
 		if ( is_null( $meta_stack ) ) {
 			$meta_stack = data::get_active_metaplates();
 		}
-		
-		// clear out <!--metaplate-->
-		$content = str_replace( '<p><!--metaplate--></p>', '', $content );
-		// in case the wpautop didnt detect the tag.
-		$content = str_replace( '<!--metaplate-->', '', $content );
+
 
 		if( empty( $meta_stack ) ){
 			return $content;
@@ -47,6 +43,7 @@ class render {
 		if ( is_null( $template_data ) ) {
 			global $post;
 			$template_data = data::get_custom_field_data( $post->ID );
+			$template_data = array_merge( $template_data, $extra_data );
 		}
 
 		if( ! $template_data || empty( $template_data ) ){
@@ -61,7 +58,7 @@ class render {
 	
 		// add filter.
 		$magic = new filter\magictag();
-		$content = $magic->do_magic_tag( trim( $content ) );
+		$content = $magic->do_magic_tag( $content );
 
 		$style_data = null;
 		$script_data = null;
@@ -115,7 +112,6 @@ class render {
 
 
 		}
-
 
 		// insert CSS
 		if( ! empty( $style_data ) ){
@@ -184,14 +180,6 @@ class render {
 			array(
 				'name' => '_image',
 				'class' => 'calderawp\helpers\image'
-			),
-			array(
-				'name' => 'vardump',
-				'class' => 'calderawp\helpers\vardump'
-			),
-			array(
-				'name' => 'sanitize',
-				'class' => 'calderawp\helpers\sanitize'
 			)
 		);
 
