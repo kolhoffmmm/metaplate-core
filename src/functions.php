@@ -19,7 +19,7 @@ if ( ! function_exists( 'caldera_metaplate_render' ) ) {
 	 *
 	 * @return string|null The rendered content if it was able to be rendered.
 	 */
-	function caldera_metaplate_render( $metaplate, $post_id = null, $template_data = null ) {
+	function caldera_metaplate_render( $metaplate, $post_id = null, $template_data = null, $extra_data = array() ) {
 		if ( is_string( $metaplate ) ) {
 			$metaplate = calderawp\metaplate\core\data::get_metaplate( $metaplate );
 		}
@@ -29,14 +29,16 @@ if ( ! function_exists( 'caldera_metaplate_render' ) ) {
 			return;
 
 		}
-
+		
 
 		if ( is_null( $template_data ) && ! is_null( $post_id ) ) {
 			$template_data = calderawp\metaplate\core\data::get_custom_field_data( $post_id );
+			$template_data = array_merge( $template_data, $extra_data );		
 		}
-
+		
+		
 		$render = new calderawp\metaplate\core\render();
-		$output = $render->render_metaplate( null, array( $metaplate ), $template_data );
+		$output = $render->render_metaplate( null, array( $metaplate ), $template_data, null ,$extra_data );
 		if ( is_string( $output ) ) {
 			return $output;
 
@@ -120,10 +122,10 @@ if ( ! function_exists( 'caldera_metaplate_from_file' ) ) {
 	 *
 	 * @return null|string
 	 */
-	function caldera_metaplate_from_file( $file, $post_id = null, $template_data = null ) {
+	function caldera_metaplate_from_file( $file, $post_id, $template_data = null, $extra_data = array() ) {
 		$metaplate = calderawp\metaplate\core\file_load::load( $file );
 		if ( is_array( $metaplate ) && isset( $metaplate['html']['code'] ) ) {
-			return caldera_metaplate_render( $metaplate, $post_id, $template_data );
+			return caldera_metaplate_render( $metaplate, $post_id, $template_data, $extra_data );
 
 		}
 
